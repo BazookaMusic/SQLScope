@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Query
-import api.consts as CONSTS
-from api.responses import OkWithQuery,BadRequest, OkList, Ok
+import consts as CONSTS
+from responses import OkWithQuery,BadRequest, OkList, Ok
 from pydantic import BaseModel
-import api.translator as translator
+import translator as translator
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
