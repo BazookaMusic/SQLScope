@@ -6,6 +6,9 @@ def OkWithQuery(query):
                             "query": query
                         })
 
+def Ok():
+    return JSONResponse(status_code=200)
+
 def OkList(li, name="list"):
     return JSONResponse(status_code=200, content=
                         {

@@ -1,16 +1,14 @@
 from fastapi import FastAPI, Query
 import api.consts as CONSTS
-from api.responses import OkWithQuery,BadRequest, OkList
+from api.responses import OkWithQuery,BadRequest, OkList, Ok
 from pydantic import BaseModel
 import api.translator as translator
 from fastapi.middleware.cors import CORSMiddleware
+import os
+
+origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000").split(",")
 
 app = FastAPI()
-
-origins = [
-    "http://localhost:3000",  # React app running on localhost
-    "http://127.0.0.1:3000",  # React app running on localhost
-]
 
 app.add_middleware(
     CORSMiddleware,
@@ -55,6 +53,9 @@ def dialects():
     all_dialects = [dialect for dialect in translator.dialects()]
     return OkList(all_dialects, "dialects")
 
+@app.get("/healthz")
+def healthz():
+    return Ok()
 
 if __name__ == '__main__':
     import uvicorn
