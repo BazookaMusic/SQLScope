@@ -7,7 +7,7 @@ def OkWithQuery(query):
                         })
 
 def Ok():
-    return JSONResponse(status_code=200)
+    return JSONResponse(status_code=200, content= {})
 
 def OkList(li, name="list"):
     return JSONResponse(status_code=200, content=
