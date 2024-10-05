@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-dracula-background text-dracula-foreground font-sans;
+  }
+
+  code {
+    @apply font-mono;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+}
+
+@layer components {
+  .copy-to-clipboard-button {
+    @apply bg-transparent text-dracula-foreground p-2.5 rounded cursor-pointer transition ease-in-out duration-300 flex items-center border-none;
+  }
+
+  .copy-to-clipboard-button:hover {
+    @apply bg-dracula-selection;
+  }
+
+  .syntax-highlighter-frame {
+    @apply border-2 border-dracula-comment p-4 rounded-lg bg-dracula-selection shadow-lg;
+  }
+}

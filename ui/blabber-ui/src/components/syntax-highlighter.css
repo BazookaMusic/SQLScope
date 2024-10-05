@@ -1,0 +1,7 @@
+.syntax-highlighter-frame {
+    border: 2px solid #6272a4; /* Dracula selection */
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #44475a; /* Dracula current line */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
