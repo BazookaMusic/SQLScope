@@ -196,7 +196,7 @@ const MainView: React.FC = () => {
                 </div>
             }
             <footer className="main-view-footer mt-8 text-center text-dracula-comment text-sm">
-                <p>&copy; {new Date().getFullYear()} All rights reserved.</p>
+                <p>&copy; {new Date().getFullYear()} All rights reserved. Powered by <a href="https://github.com/tobymao/sqlglot">SQLGlot</a> by Toby Mao.</p>
             </footer>
         </div>
     );
