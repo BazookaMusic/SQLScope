@@ -38,3 +38,14 @@
     @apply border-2 border-dracula-comment p-4 rounded-lg bg-dracula-selection shadow-lg;
   }
 }
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
