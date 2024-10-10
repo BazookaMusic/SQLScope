@@ -1,55 +1,12 @@
 import { IDialects } from "../common/IDialects";
 import { IErrors, ITranslationProvider, ITranspileResponse } from "../common/ITranslationProvider";
+import SQLGlotPython from "./sqlglot_python";
 
 declare global {
     interface Window {
       loadPyodide: any;
     }
 }
-  
-const pythonDeclarations = 
-`import sqlglot
-import sqlglot.dialects
-import json
-
-def dialects():
-    return [name for name, obj in sqlglot.dialects.__dict__.items() if isinstance(obj, type) and issubclass(obj, sqlglot.Dialect) and obj is not sqlglot.Dialect and 'dialect' not in name.lower()]
-
-supported_dialects = {dialect.lower() for dialect in dialects()}
-def is_supported_dialect(dialect: str) -> bool:
-    # get submodules from dialect
-    lower_dialect = dialect.lower()
-    return lower_dialect in supported_dialects
-
-def translate(source: str, in_dialect: str, out_dialect: str, pretty:bool = False) -> str:
-    print(f"Translating from {in_dialect} to {out_dialect}")
-    return sqlglot.transpile(source, read=in_dialect, write = out_dialect, pretty=pretty)
-
-print("initialized")
-`
-
-const availableDialectsSrc =
-`
-dialects_json = { "dialects" : dialects()}
-json.dumps(dialects_json)`
-
-const transpileSrc =
-`
-in_dialect = in_dialect.lower()
-out_dialect = out_dialect.lower()
-
-try:
-    if (not is_supported_dialect(in_dialect)):
-        raise Exception(f"{in_dialect} is not a supported dialect")
-    if (not is_supported_dialect(out_dialect)):
-        raise Exception(f"{out_dialect} is not a supported dialect")
-    
-    result = { "query" : '\\n'.join(sqlglot.transpile(source, read=in_dialect, write = out_dialect, pretty=pretty)) }
-except Exception as ex:
-    result = {"errors" : str(ex)}
-
-json.dumps(result)
-`
 
 class PythonWASMProvider implements ITranslationProvider
 {
@@ -64,7 +21,7 @@ class PythonWASMProvider implements ITranslationProvider
             await this.Initialize();
         }
 
-        let dialects : IDialects | undefined = await this.RunWithOutput<IDialects>(availableDialectsSrc);
+        let dialects : IDialects | undefined = await this.RunWithOutput<IDialects>(SQLGlotPython.GetAvailableDialects);
         if (!dialects)
         {
             return []
@@ -80,7 +37,7 @@ class PythonWASMProvider implements ITranslationProvider
         }
 
         const content = await this.RunWithOutput<ITranspileResponse>(
-            transpileSrc, 
+            SQLGlotPython.TranspileQuery, 
             {
                 source: code,
                 in_dialect: dialect,
@@ -116,7 +73,7 @@ class PythonWASMProvider implements ITranslationProvider
             const micropip = instance.pyimport("micropip");
             await micropip.install('sqlglot');
 
-            await instance.runPythonAsync(pythonDeclarations);
+            await instance.runPythonAsync(SQLGlotPython.PythonFunctionDeclarations);
             
             this.codeRunner = instance.runPythonAsync;
             this.createVariable = (key: string, value: any) => instance.globals.set(key, value)

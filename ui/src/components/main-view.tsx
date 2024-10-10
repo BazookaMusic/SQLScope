@@ -67,7 +67,7 @@ const MainView: React.FC = () => {
 
         if (outputDialectParam)
         {
-            setOutputDialect(outputDialect);
+            setOutputDialect(outputDialectParam);
         }
     }, []);
 
