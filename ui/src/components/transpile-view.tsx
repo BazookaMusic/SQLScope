@@ -139,9 +139,6 @@ interface TranspileViewProps {
                     aria-live="assertive"
                 />
             }
-            <CustomSyntaxHighlighter language="sql">
-                {inputSQL}
-            </CustomSyntaxHighlighter>
         </div>
         <TranspileToSection
             errors={errors}
