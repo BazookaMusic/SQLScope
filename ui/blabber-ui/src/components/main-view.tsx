@@ -122,8 +122,8 @@ const MainView: React.FC = () => {
         <div className="main-view bg-dracula-background text-dracula-foreground min-h-screen p-4 lg:px-32 xl:px-64 mt-8 lg:mt-16 xl:mt-24 mx-auto my-8 font-sans">
             <header className="main-view-header mb-4">
                 <h1 className="main-view-title text-3xl font-bold text-center mb-4">
-                    <span className="text-dracula-pink">SQL</span> 
-                    <span className="text-dracula-cyan"> Translator</span>
+                    <span className="text-dracula-pink">SQL</span>
+                    <span className="text-dracula-cyan">Scope</span>
                 </h1>
                 <p className="text-center text-dracula-comment mb-2">
                     Convert SQL queries between different dialects effortlessly.
@@ -183,7 +183,7 @@ const MainView: React.FC = () => {
                                         </option>
                                     ))}
                                 </select>
-                                <div className='output-header-options flex items-center justify-between w-full'>
+                                <div className='output-header-options flex items-center w-full'>
                                     <div className='flex items-center'>
                                         <button className={`p-2 rounded flex items-center bg-dracula-selection text-dracula-foreground ml-4 active:bg-dracula-pink active:text-dracula-background font-sans`}  
                                             onClick={() => CopyToClipboard(outputSQL, () => setCopiedToClipboardMessage(updatedCopyMessage), () => setCopiedToClipboardMessage(defaultCopyMessage) )} 
@@ -201,9 +201,9 @@ const MainView: React.FC = () => {
                                             <FaLink />
                                         </button>
                                     </div>
-                                    <div className='pretty-print-option-toggle option-toggle flex mr-2 lg:mr-4 xl:mr-6'>
+                                    <div className='pretty-print-option-toggle option-toggle flex mr-2 ml-2 lg:mr-4 xl:mr-6'>
                                         <button 
-                                            className={`ml-2 p-2 rounded flex items-center ${prettyPrint ? 'bg-dracula-pink text-dracula-background opacity-90' : 'bg-dracula-selection text-dracula-foreground opacity-40'}  hover:opacity-100 font-sans text-sm`} 
+                                            className={`ml-2 p-2 rounded flex items-center ${prettyPrint ? 'bg-dracula-pink text-dracula-background opacity-90' : 'bg-dracula-selection text-dracula-foreground opacity-40'}  hover:opacity-100 font-sans`} 
                                             onClick={() => setPrettyPrint(!prettyPrint)}
                                             aria-label="Toggle pretty print option"
                                             title="Toggle pretty printing 🌈"
