@@ -62,8 +62,13 @@ class PythonWASMProvider implements ITranslationProvider
         return content;
     }
     
-    private async Initialize()
+    public async Initialize()
     {
+        if (this.initialized)
+        {
+            return;
+        }
+
         try
         {
             const instance = await window

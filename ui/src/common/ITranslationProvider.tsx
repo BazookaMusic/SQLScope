@@ -16,6 +16,8 @@ interface IErrors
 
 interface ITranslationProvider
 {
+    Initialize(): Promise<void>;
+
     AvailableDialects() : Promise<string[]>;
 
     /**

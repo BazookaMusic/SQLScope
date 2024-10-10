@@ -1,6 +1,6 @@
-function RemoveAnsiAndBold(text: string) {
+function RemoveAnsiAndUnderline(text: string) {
     // Regular expression to match ANSI escape codes
-    
+
     /* eslint-disable no-control-regex */
     const ansiRegex = /\x1b\[[0-9;]*m/g;
     /* eslint-enable no-control-regex */
@@ -18,4 +18,4 @@ function RemoveAnsiAndBold(text: string) {
     });
 }
 
-export { RemoveAnsiAndBold };
+export { RemoveAnsiAndUnderline };

@@ -41,6 +41,10 @@ class APIProvider implements ITranslationProvider
         return result;
     }
 
+    public async Initialize(): Promise<void> {
+        return;
+    }
+
     private async FetchDialects()  {
         const response = await fetch(`${this.APIEndpoint}/dialects`);
         const dialects : IDialects = await response.json();
