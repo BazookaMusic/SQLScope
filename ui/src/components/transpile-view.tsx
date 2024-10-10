@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { RemoveAnsiAndUnderline } from "../api-utils/errors-formatting";
 import { Selector } from "./selector";
-import { CustomSyntaxHighlighter } from "./syntax-highlighter";
 import { TranspileToSection } from "./transpileto-section";
 import { DecodeQuery, EncodeQuery, MakeQueryParams } from "../query-utils/query-encoder";
 import { CopyCurrentUrlToClipboard, CopyToClipboard } from "./copy-to-clipboard";
