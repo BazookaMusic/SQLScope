@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { FaClipboard, FaLink } from 'react-icons/fa';
-import { FcStatistics } from "react-icons/fc";
 import { Selector } from './selector'; // Assuming Selector is in the same folder
 import { ActionButton } from './action-button'; // Assuming ActionButton is in the same folder
 import { CustomSyntaxHighlighter } from './syntax-highlighter'; // Assuming CustomSyntaxHighlighter is in the same folder
@@ -99,15 +98,6 @@ const TranspileToSection: React.FC<TranspileToSectionProps> = ({
                     <label>
                     <span className="hidden sm:inline">Prettify</span>🌈
                     </label>
-                </ActionButton>
-                <ActionButton
-                    buttonStyle="bg-dracula-selection text-dracula-foreground"
-                    onClick={() => {}}
-                    ariaLabel="Statistics"
-                    title="Statistics"
-                >
-                    <label className="mr-2 hidden sm:inline">Statistics</label>
-                    <FcStatistics />
                 </ActionButton>
                 </div>
             </div>
