@@ -1,11 +1,11 @@
 
 const SQLGlotPython = {
     PythonFunctionDeclarations: `import sqlglot
-import sqlglot.dialects as dialects
+import sqlglot.dialects as sqlglotdialects
 import json
 
 def dialects():
-    return dialects.DIALECTS
+    return sqlglotdialects.DIALECTS
 
 supported_dialects = {dialect.lower() for dialect in dialects()}
 def is_supported_dialect(dialect: str) -> bool:
