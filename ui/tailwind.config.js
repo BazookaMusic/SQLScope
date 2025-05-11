@@ -17,6 +17,7 @@ module.exports = {
           purple: '#bd93f9',
           red: '#ff5555',
           yellow: '#f1fa8c',
+          logo: '#8e2e95'
         },
       },
       keyframes: {
