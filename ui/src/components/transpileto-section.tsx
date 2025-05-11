@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { FaClipboard, FaLink } from 'react-icons/fa';
-import { Selector } from './selector'; // Assuming Selector is in the same folder
-import { ActionButton } from './action-button'; // Assuming ActionButton is in the same folder
-import { CustomSyntaxHighlighter } from './syntax-highlighter'; // Assuming CustomSyntaxHighlighter is in the same folder
+import { Selector } from './selector';
+import { ActionButton } from './action-button';
+import { CustomSyntaxHighlighter } from './syntax-highlighter';
 
 interface TranspileToSectionProps {
   errors: string | undefined;
@@ -12,15 +12,21 @@ interface TranspileToSectionProps {
   outputSQL: string;
   prettyPrint: boolean;
   setPrettyPrint: (value: boolean) => void;
-  CopyToClipboard: (content: string, onSuccess: () => void, onFailure: () => void) => void;
-  CopyCurrentUrlToClipboard: (onSuccess: () => void, onFailure: () => void) => void;
+  CopyToClipboard: (
+    content: string,
+    onSuccess: () => void,
+    onFailure: () => void,
+  ) => void;
+  CopyCurrentUrlToClipboard: (
+    onSuccess: () => void,
+    onFailure: () => void,
+  ) => void;
 }
 
 const defaultCopyMessage = 'Copy';
 const defaultLinkCopyMessage = 'Copy Link';
-
-const updatedCopyMessage = 'Copied to clipboard!';
-const updatedLinkCopyMessage = 'Copied link to clipboard!';
+const updatedCopyMessage = 'Copied!';
+const updatedLinkCopyMessage = 'Link copied!';
 
 const TranspileToSection: React.FC<TranspileToSectionProps> = ({
   errors,
@@ -33,81 +39,107 @@ const TranspileToSection: React.FC<TranspileToSectionProps> = ({
   CopyToClipboard,
   CopyCurrentUrlToClipboard,
 }) => {
-    
-    const [copiedToClipboardMessage, setCopiedToClipboardMessage] = useState(defaultCopyMessage);
-    const [copiedLinkToClipboardMessage, setCopiedLinkToClipboardMessage] = useState(defaultLinkCopyMessage);
-  
-    if (errors) return null;
+  const [copiedTxt, setCopiedTxt] = useState(defaultCopyMessage);
+  const [copiedLinkTxt, setCopiedLinkTxt] = useState(defaultLinkCopyMessage);
 
-    return (
-        <div className="main-view-output-section fade-in mt-15">
-        <div className="main-view-output-header flex items-center justify-between mb-4">
-            <div className="flex items-center w-full">
-            <Selector
-                selectStyle="main-view-select bg-dracula-selection text-dracula-pink p-2 rounded mr-2 font-sans"
-                value={outputDialect}
-                onChange={handleOutputDialectChange}
-                ariaLabel="Select the dialect to transpile to"
-                title="Select the dialect to transpile to"
-                options={availableDialects || []}
-            />
-            <div className="output-header-options flex items-center w-full">
-                <div className="flex items-center">
-                <ActionButton
-                    buttonStyle="bg-dracula-selection text-dracula-foreground"
-                    onClick={() =>
-                    CopyToClipboard(
-                        outputSQL,
-                        () => setCopiedToClipboardMessage(updatedCopyMessage),
-                        () => setCopiedToClipboardMessage(defaultCopyMessage)
-                    )
-                    }
-                    ariaLabel="Copy the transpiled query to the clipboard"
-                    title="Copy the transpiled query"
-                >
-                    <label className="mr-2 hidden sm:inline">{copiedToClipboardMessage}</label>
-                    <FaClipboard />
-                </ActionButton>
+  if (errors) return null;
 
-                <ActionButton
-                    buttonStyle="bg-dracula-selection text-dracula-foreground"
-                    onClick={() =>
-                    CopyCurrentUrlToClipboard(
-                        () => setCopiedLinkToClipboardMessage(updatedLinkCopyMessage),
-                        () => setCopiedLinkToClipboardMessage(defaultLinkCopyMessage)
-                    )
-                    }
-                    ariaLabel="Copy current URL to clipboard"
-                    title="Copy link to query"
-                >
-                    <label className="mr-2 hidden sm:inline">{copiedLinkToClipboardMessage}</label>
-                    <FaLink />
-                </ActionButton>
-                </div>
-                <div className="pretty-print-option-toggle option-toggle flex mr-2 ml-2 lg:mr-4 xl:mr-6">
-                <ActionButton
-                    buttonStyle={`ml-2 p-2 rounded flex items-center ${
-                    prettyPrint
-                        ? 'bg-dracula-pink text-dracula-background opacity-90'
-                        : 'bg-dracula-selection text-dracula-foreground opacity-40'
-                    } hover:opacity-100 font-sans`}
-                    onClick={() => setPrettyPrint(!prettyPrint)}
-                    ariaLabel="Toggle pretty print option"
-                    title="Toggle pretty printing 🌈"
-                >
-                    <label>
-                    <span className="hidden sm:inline">Prettify</span>🌈
-                    </label>
-                </ActionButton>
-                </div>
-            </div>
-            </div>
+  return (
+    <div className="transpile-output-card bg-dracula-selection/30 border-l-4 border-dracula-pink rounded-lg shadow px-4 py-4 mt-6">
+      {/* ─────────────── Header row */}
+      <div className="flex flex-wrap items-center justify-between mb-4 gap-2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-5 h-5 text-dracula-foreground"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-label="Transpile to"
+        >
+          <polyline points="17 1 21 5 17 9" />
+          <path d="M3 5h18" />
+          <polyline points="7 23 3 19 7 15" />
+          <path d="M21 19H3" />
+        </svg>
+        <Selector
+          selectStyle="
+          main-view-select
+          bg-dracula-selection
+          text-dracula-foreground
+          border border-dracula-pink/40
+          rounded-md
+          px-3 py-1.5
+          leading-none
+          font-sans
+          focus:outline-none
+          hover:bg-dracula-selection/70
+          "
+          value={outputDialect}
+          onChange={handleOutputDialectChange}
+          ariaLabel="Select the dialect to transpile to"
+          title="Select the dialect to transpile to"
+          options={availableDialects || []}
+        />
+
+        <div className="flex flex-wrap items-center gap-2 ml-auto">
+          <ActionButton
+            buttonStyle="bg-dracula-selection text-dracula-foreground p-2 rounded flex items-center hover:bg-dracula-selection/80 transition-colors"
+            onClick={() =>
+              CopyToClipboard(
+                outputSQL,
+                () => setCopiedTxt(updatedCopyMessage),
+                () => setCopiedTxt(defaultCopyMessage),
+              )
+            }
+            ariaLabel="Copy the transpiled query to the clipboard"
+            title="Copy the transpiled query"
+          >
+            <span className="mr-2 hidden sm:inline text-xs font-medium">{copiedTxt}</span>
+            <FaClipboard />
+          </ActionButton>
+
+          <ActionButton
+            buttonStyle="bg-dracula-selection text-dracula-foreground p-2 rounded flex items-center hover:bg-dracula-selection/80 transition-colors"
+            onClick={() =>
+              CopyCurrentUrlToClipboard(
+                () => setCopiedLinkTxt(updatedLinkCopyMessage),
+                () => setCopiedLinkTxt(defaultLinkCopyMessage),
+              )
+            }
+            ariaLabel="Copy current URL to clipboard"
+            title="Copy link to query"
+          >
+            <span className="mr-2 hidden sm:inline text-xs font-medium">{copiedLinkTxt}</span>
+            <FaLink />
+          </ActionButton>
+
+          <ActionButton
+            buttonStyle={`p-2 rounded flex items-center font-sans transition-colors ${
+              prettyPrint
+                ? 'bg-dracula-pink text-dracula-background opacity-90 hover:opacity-100'
+                : 'bg-dracula-selection text-dracula-foreground opacity-40 hover:opacity-80'
+            }`}
+            onClick={() => setPrettyPrint(!prettyPrint)}
+            ariaLabel="Toggle pretty print option"
+            title="Toggle pretty printing"
+          >
+            <span className="hidden sm:inline mr-1 text-xs font-medium">Prettify</span>
+            🌈
+          </ActionButton>
         </div>
-        {outputSQL && (
-            <CustomSyntaxHighlighter language="sql">{outputSQL}</CustomSyntaxHighlighter>
-        )}
-        </div>
-    );
+      </div>
+
+      {/* ─────────────── Highlighted SQL */}
+      {outputSQL && (
+        <CustomSyntaxHighlighter language="sql">
+          {outputSQL}
+        </CustomSyntaxHighlighter>
+      )}
+    </div>
+  );
 };
 
-export  {TranspileToSection};
+export { TranspileToSection };

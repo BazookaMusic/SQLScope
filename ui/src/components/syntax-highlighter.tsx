@@ -12,7 +12,7 @@ const CustomSyntaxHighlighter = ({ children, ...props }: CustomSyntaxHighlighter
     };
 
     return (
-        <div className="syntax-highlighter-frame border-2 border-dracula-comment p-4 rounded-lg bg-dracula-selection shadow-lg mt-2">
+        <div className="p-4 rounded-lg bg-dracula-selection shadow-lg mt-2">
             <SyntaxHighlighter language="sql" style={dracula} customStyle={customStyle} showLineNumbers={true} {...props}>
                 {children}
             </SyntaxHighlighter>

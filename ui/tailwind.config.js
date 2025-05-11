@@ -19,6 +19,20 @@ module.exports = {
           yellow: '#f1fa8c',
         },
       },
+      keyframes: {
+        gradientShift: {
+          '0%, 100%': { 'background-position': '0% 50%' },
+          '50%':       { 'background-position': '100% 50%' },
+        },
+      },
+      // hook those keyframes into an “animation” utility
+      animation: {
+        'gradient-shift': 'gradientShift 4s ease infinite',
+      },
+      // make a bg-size utility for 200%×200%
+      backgroundSize: {
+        '200%': '200% 200%',
+      },
     },
   },
   fontFamily: {

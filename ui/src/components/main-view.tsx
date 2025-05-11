@@ -27,13 +27,14 @@ const MainView: React.FC = () => {
 
     return (
         <div className="main-view bg-dracula-background text-dracula-foreground min-h-screen p-4 lg:px-32 xl:px-64 mt-8 lg:mt-16 xl:mt-24 mx-auto my-8 font-sans">
-            <header className="main-view-header mb-4">
-                <h1 className="main-view-title text-3xl font-bold text-center mb-4">
-                    <span className="text-dracula-pink">SQL</span>
-                    <span className="text-dracula-cyan"> Scope</span>
-                </h1>
-                <p className="text-center text-dracula-comment mb-2">
-                    Convert SQL queries between different dialects effortlessly.
+            <header className="main-view-header flex flex-col items-center text-center mb-4">
+                <img 
+                    src="sqlscope-logo.png" 
+                    alt="SQLScope Logo"
+                    className="w-24 sm:w-32 md:w-40 lg:w-48 xl:w-56 h-20 sm:h-24 md:h-28 object-cover rounded mb-2"
+                />
+                <p className="text-dracula-comment text-sm sm:text-base md:text-lg">
+                    Convert SQL queries effortlessly between different dialects.
                 </p>
             </header>
             { isReady &&

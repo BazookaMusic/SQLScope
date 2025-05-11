@@ -30,6 +30,21 @@ interface ITranslationProvider
      * @returns {Promise<void>} A promise that resolves when the transpilation is complete.
      */
     Transpile(code: string, dialect: string, targetDialect: string, pretty: boolean) : Promise<ITranspileResponse>;
+
+    /**
+     * Gets the columns for a given query
+     * @param query The query to be analyzed
+     * @param dialect The dialect of the code
+     */
+    GetColumns(query: string, dialect: string): Promise<string[]>;
+
+    /**
+     * Gets the columns for a given query
+     * @param query The query to be analyzed
+     * @param dialect The dialect of the code
+     */
+    GetJoins(query: string, dialect: string): Promise<Record<string, any>>;
+
 }
 
 export type {ITranslationProvider, ITranspileRequest, ITranspileResponse, IErrors}

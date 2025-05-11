@@ -5,6 +5,7 @@ import { TranspileToSection } from "./transpileto-section";
 import { DecodeQuery, EncodeQuery, MakeQueryParams } from "../query-utils/query-encoder";
 import { CopyCurrentUrlToClipboard, CopyToClipboard } from "./copy-to-clipboard";
 import { ITranslationProvider } from "../common/ITranslationProvider";
+import { QueryAnalysisSection } from "./queryanalysis-section";
 
 interface TranspileViewProps {
     translationProvider: ITranslationProvider
@@ -111,18 +112,57 @@ interface TranspileViewProps {
 
     return (
      <div>
-        <div className="main-view-input-section mb-4 mt-10">
-        <Selector
-            selectStyle="main-view-select bg-dracula-selection text-dracula-pink p-2 rounded mb-2 font-sans"
-            value={inputDialect}
-            onChange={handleInputDialectChange}
-            ariaLabel="Select input SQL dialect"
-            title="Select the dialect to transpile from"
-            options={availableDialects || []}
-        />
+        <div className="mb-4 mt-10">
+        <div className="flex items-center gap-3 mb-4 select-none h-full">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 text-dracula-foreground"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-label="Source SQL dialect"
+                >
+                <polyline points="16 18 22 12 16 6" />
+                <polyline points="8 6 2 12 8 18" />
+            </svg>
+            <Selector
+                selectStyle="
+                main-view-select
+                bg-dracula-selection
+                text-dracula-foreground
+                border border-dracula-pink/40
+                rounded-md
+                px-3 py-1.5
+                leading-none
+                font-sans
+                focus:outline-none
+                hover:bg-dracula-selection/70
+                "
+                value={inputDialect}
+                onChange={handleInputDialectChange}
+                ariaLabel='Select input SQL dialect'
+                title='Select the dialect to transpile from'
+                options={availableDialects ?? []}
+            />
+        </div>
             {
                 <textarea
-                className="input-textarea bg-dracula-selection text-dracula-foreground p-2 rounded mb-2 w-full font-mono mt-2"
+                className="
+                    input-textarea
+                    w-full
+                    font-mono text-sm leading-snug resize-y
+                    bg-dracula-selection/25            /* lighter surface than before */
+                    text-dracula-foreground            /* full foreground */
+                    border-l-4 border-dracula-pink     /* accent stripe */
+                    rounded-lg shadow-inner
+                    px-3 py-2 mt-3
+                    placeholder-dracula-comment/80     /* lighter placeholder */
+                    outline-none
+                    transition-colors
+                "
                 value={inputSQL}
                 onChange={handleInputSQLChange}
                 placeholder="Enter SQL here"
@@ -150,6 +190,7 @@ interface TranspileViewProps {
             CopyToClipboard={CopyToClipboard}
             CopyCurrentUrlToClipboard={CopyCurrentUrlToClipboard}
         />
+        <QueryAnalysisSection query={outputSQL} translationProvider={translationProvider} dialect={outputDialect} />
     </div>
 )}
 
