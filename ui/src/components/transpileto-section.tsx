@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
-import { FaClipboard, FaLink } from 'react-icons/fa';
-import { Selector } from './selector';
-import { ActionButton } from './action-button';
-import { CustomSyntaxHighlighter } from './syntax-highlighter';
+// TranspileToSection.tsx
+// Requires: npm install @uiw/react-codemirror @codemirror/lang-sql @codemirror/theme-dracula
+// If you already installed these for TranspileView, no extra deps needed.
+
+import React, { useState, useMemo } from "react";
+import CodeMirror from "@uiw/react-codemirror";
+import { sql } from "@codemirror/lang-sql";
+import { dracula } from "@uiw/codemirror-theme-dracula";
+import { FaClipboard, FaLink } from "react-icons/fa";
+import { Selector } from "./selector";
+import { ActionButton } from "./action-button";
 
 interface TranspileToSectionProps {
   errors: string | undefined;
@@ -15,18 +21,18 @@ interface TranspileToSectionProps {
   CopyToClipboard: (
     content: string,
     onSuccess: () => void,
-    onFailure: () => void,
+    onFailure: () => void
   ) => void;
   CopyCurrentUrlToClipboard: (
     onSuccess: () => void,
-    onFailure: () => void,
+    onFailure: () => void
   ) => void;
 }
 
-const defaultCopyMessage = 'Copy';
-const defaultLinkCopyMessage = 'Copy Link';
-const updatedCopyMessage = 'Copied!';
-const updatedLinkCopyMessage = 'Link copied!';
+const defaultCopyMessage = "Copy";
+const defaultLinkCopyMessage = "Copy Link";
+const updatedCopyMessage = "Copied!";
+const updatedLinkCopyMessage = "Link copied!";
 
 const TranspileToSection: React.FC<TranspileToSectionProps> = ({
   errors,
@@ -65,18 +71,7 @@ const TranspileToSection: React.FC<TranspileToSectionProps> = ({
           <path d="M21 19H3" />
         </svg>
         <Selector
-          selectStyle="
-          main-view-select
-          bg-dracula-selection
-          text-dracula-foreground
-          border border-dracula-pink/40
-          rounded-md
-          px-3 py-1.5
-          leading-none
-          font-sans
-          focus:outline-none
-          hover:bg-dracula-selection/70
-          "
+          selectStyle="main-view-select bg-dracula-selection text-dracula-foreground border border-dracula-pink/40 rounded-md px-3 py-1.5 leading-none font-sans focus:outline-none hover:bg-dracula-selection/70"
           value={outputDialect}
           onChange={handleOutputDialectChange}
           ariaLabel="Select the dialect to transpile to"
@@ -91,7 +86,7 @@ const TranspileToSection: React.FC<TranspileToSectionProps> = ({
               CopyToClipboard(
                 outputSQL,
                 () => setCopiedTxt(updatedCopyMessage),
-                () => setCopiedTxt(defaultCopyMessage),
+                () => setCopiedTxt(defaultCopyMessage)
               )
             }
             ariaLabel="Copy the transpiled query to the clipboard"
@@ -106,7 +101,7 @@ const TranspileToSection: React.FC<TranspileToSectionProps> = ({
             onClick={() =>
               CopyCurrentUrlToClipboard(
                 () => setCopiedLinkTxt(updatedLinkCopyMessage),
-                () => setCopiedLinkTxt(defaultLinkCopyMessage),
+                () => setCopiedLinkTxt(defaultLinkCopyMessage)
               )
             }
             ariaLabel="Copy current URL to clipboard"
@@ -117,11 +112,11 @@ const TranspileToSection: React.FC<TranspileToSectionProps> = ({
           </ActionButton>
 
           <ActionButton
-            buttonStyle={`p-2 rounded flex items-center font-sans transition-colors ${
+            buttonStyle={
               prettyPrint
-                ? 'bg-dracula-pink text-dracula-background opacity-90 hover:opacity-100'
-                : 'bg-dracula-selection text-dracula-foreground opacity-40 hover:opacity-80'
-            }`}
+                ? "bg-dracula-pink text-dracula-background opacity-90 hover:opacity-100 p-2 rounded flex items-center font-sans transition-colors"
+                : "bg-dracula-selection text-dracula-foreground opacity-40 hover:opacity-80 p-2 rounded flex items-center font-sans transition-colors"
+            }
             onClick={() => setPrettyPrint(!prettyPrint)}
             ariaLabel="Toggle pretty print option"
             title="Toggle pretty printing"
@@ -132,11 +127,19 @@ const TranspileToSection: React.FC<TranspileToSectionProps> = ({
         </div>
       </div>
 
-      {/* ─────────────── Highlighted SQL */}
+      {/* ─────────────── Read‑only SQL viewer (CodeMirror) */}
       {outputSQL && (
-        <CustomSyntaxHighlighter language="sql">
-          {outputSQL}
-        </CustomSyntaxHighlighter>
+        <div className="w-full border-l-4 border-dracula-pink rounded-lg shadow-inner bg-dracula-selection/25">
+          <CodeMirror
+            value={outputSQL}
+            minHeight="5rem"
+            theme={dracula}
+            extensions={[sql()]}
+            basicSetup={{ lineNumbers: true, foldGutter: true, highlightActiveLine: false }}
+            editable={false}
+            aria-label="Transpiled SQL query (read only)"
+          />
+        </div>
       )}
     </div>
   );
