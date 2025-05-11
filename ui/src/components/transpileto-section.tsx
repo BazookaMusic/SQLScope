@@ -2,7 +2,7 @@
 // Requires: npm install @uiw/react-codemirror @codemirror/lang-sql @codemirror/theme-dracula
 // If you already installed these for TranspileView, no extra deps needed.
 
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql } from "@codemirror/lang-sql";
 import { dracula } from "@uiw/codemirror-theme-dracula";
