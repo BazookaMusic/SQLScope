@@ -34,7 +34,7 @@ const TranspileView: React.FC<TranspileViewProps> = ({ translationProvider }) =>
   const [inputDialect, setInputDialect] = useState<string>(
     urlParams.get("inputDialect") ?? "TSQL"
   );
-  const [outputDialect, setOutputDialect] = useState<string>("TSQL");
+  const [outputDialect, setOutputDialect] = useState<string>("Redshift");
   const [availableDialects, setAvailableDialects] =
     useState<string[] | undefined>(undefined);
   const [prettyPrint, setPrettyPrint] = useState<boolean>(false);
