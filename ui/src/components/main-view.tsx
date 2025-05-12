@@ -67,7 +67,7 @@ const MainView: React.FC = () => {
             }
             
             <footer className="main-view-footer mt-8 text-center text-dracula-comment text-sm">
-                <p>&copy; {new Date().getFullYear()} BazookaMusic. Powered by <a href="https://github.com/tobymao/sqlglot">SQLGlot</a> and <a href="https://pyodide.org/en/stable/">Pyodide</a>. 
+                <p>&copy; {new Date().getFullYear()} <a href='https://www.bazookamusic.me'>BazookaMusic</a>. Powered by <a href="https://github.com/tobymao/sqlglot">SQLGlot</a> and <a href="https://pyodide.org/en/stable/">Pyodide</a>. 
                 <a href="https://www.flaticon.com/free-icons/bird" title="bird icons"> Bird icons created by Freepik - Flaticon.</a></p>
             </footer>
         </div>
