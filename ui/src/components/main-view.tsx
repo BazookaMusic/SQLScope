@@ -31,7 +31,11 @@ const MainView: React.FC = () => {
                 <img 
                     src="sqlscope-logo.png" 
                     alt="SQLScope Logo"
-                    className="w-24 sm:w-32 md:w-40 lg:w-48 xl:w-56 h-20 sm:h-24 md:h-28 object-cover rounded"
+                    className="    
+                        w-24 sm:w-32 md:w-40 lg:w-48 xl:w-56
+                        h-auto
+                        object-contain 
+                        rounded"
                 />
                 <h1 className="text-3xl md:text-4xl font-bold text-dracula-logo mt-2 mb-2">SQLScope</h1>
                 <p className="text-dracula-pink text-sm sm:text-base md:text-lg">
