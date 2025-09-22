@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
-from typing import Iterable, List
+from typing import Iterable, List, Optional
 
 import sqlglot
 import sqlglot.dialects as sqlglotdialects
 from sqlglot import exp
+from sqlglot.optimizer import optimizer
+from sqlglot.schema import MappingSchema
 
 
 def dialects() -> Iterable[str]:
@@ -17,6 +19,8 @@ def dialects() -> Iterable[str]:
 
 
 SUPPORTED_DIALECTS = {dialect.lower() for dialect in dialects()}
+
+CURRENT_SCHEMA: Optional[MappingSchema] = None
 
 
 def is_supported_dialect(dialect: str) -> bool:
@@ -46,6 +50,27 @@ def _deduplicate_preserving_order(values: Iterable[str]) -> List[str]:
     return unique_values
 
 
+def set_schema(schema_json: str) -> str:
+    """Set or clear the active schema definition used for validation."""
+
+    global CURRENT_SCHEMA
+
+    try:
+        if not schema_json or not schema_json.strip():
+            CURRENT_SCHEMA = None
+            return json.dumps({"status": "cleared"})
+
+        parsed = json.loads(schema_json)
+        if not isinstance(parsed, dict):
+            raise TypeError("Schema JSON must decode to an object mapping tables to columns.")
+
+        CURRENT_SCHEMA = MappingSchema(parsed)
+        return json.dumps({"status": "ok"})
+    except Exception as exc:  # pragma: no cover - transformed into JSON error response
+        CURRENT_SCHEMA = None
+        return json.dumps({"errors": str(exc)})
+
+
 def transpile_query(source: str, in_dialect: str, out_dialect: str, pretty: bool = False) -> str:
     """Transpile a SQL query between dialects and return a JSON response."""
 
@@ -58,7 +83,22 @@ def transpile_query(source: str, in_dialect: str, out_dialect: str, pretty: bool
         if not is_supported_dialect(out_dialect):
             raise ValueError(f"{out_dialect} is not a supported dialect")
 
-        transpiled = sqlglot.transpile(source, read=in_dialect, write=out_dialect, pretty=pretty)
+        statements = sqlglot.parse(
+            source,
+            read=in_dialect,
+        )
+        optimized = [
+            optimizer.optimize(
+                statement,
+                schema=CURRENT_SCHEMA,
+                dialect=in_dialect,
+            )
+            for statement in statements
+        ]
+        transpiled = [
+            statement.sql(dialect=out_dialect, pretty=pretty)
+            for statement in optimized
+        ]
         result = {"query": "\n".join(transpiled)}
     except Exception as exc:  # pragma: no cover - transformed into JSON error response
         result = {"errors": str(exc)}
@@ -76,10 +116,17 @@ def get_columns(source: str, in_dialect: str) -> str:
             raise ValueError(f"{in_dialect} is not a supported dialect")
 
         tree = sqlglot.parse_one(source, read=in_dialect)
+        optimized = optimizer.optimize(
+            tree,
+            schema=CURRENT_SCHEMA,
+            dialect=in_dialect,
+        )
         columns: List[str] = []
 
-        if isinstance(tree, exp.Select):
-            for projection in tree.expressions:
+        target = optimized if isinstance(optimized, exp.Select) else optimized.find(exp.Select)
+
+        if isinstance(target, exp.Select):
+            for projection in target.expressions:
                 expr = projection
                 if isinstance(expr, exp.Alias):
                     expr = expr.this  # unwrap alias
@@ -130,8 +177,13 @@ def get_joins(source: str, in_dialect: str) -> str:
             raise ValueError(f"{in_dialect} is not a supported dialect")
 
         tree = sqlglot.parse_one(source, read=in_dialect)
-        all_tables = _extract_joined_tables(tree)
-        join_count = len(list(tree.find_all(exp.Join)))
+        optimized = optimizer.optimize(
+            tree,
+            schema=CURRENT_SCHEMA,
+            dialect=in_dialect,
+        )
+        all_tables = _extract_joined_tables(optimized)
+        join_count = len(list(optimized.find_all(exp.Join)))
 
         result = {
             "tables": _deduplicate_preserving_order(all_tables),
@@ -147,6 +199,7 @@ __all__ = [
     "get_available_dialects",
     "get_columns",
     "get_joins",
+    "set_schema",
     "is_supported_dialect",
     "transpile_query",
 ]

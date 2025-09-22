@@ -21,6 +21,7 @@ const SQLGlotPython = {
     TranspileQuery: "transpile_query(source, in_dialect, out_dialect, pretty)",
     GetColumns: "get_columns(source, in_dialect)",
     GetJoins: "get_joins(source, in_dialect)",
+    SetSchema: "set_schema(schema_json)",
 };
 
 export { fetchPythonDeclarations };

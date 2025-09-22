@@ -21,6 +21,12 @@ interface ITranslationProvider
     AvailableDialects() : Promise<string[]>;
 
     /**
+     * Applies a schema definition, provided as a JSON document, to the
+     * translation backend. Passing an empty string clears the active schema.
+     */
+    SetSchema(schemaJson: string): Promise<void>;
+
+    /**
      * Transpiles the given code from one dialect to another.
      * 
      * @param {string} code - The code to be transpiled.
