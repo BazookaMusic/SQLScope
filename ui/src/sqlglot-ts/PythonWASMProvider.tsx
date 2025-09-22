@@ -1,6 +1,6 @@
 import { IDialects } from "../common/IDialects";
 import { IErrors, ITranslationProvider, ITranspileResponse } from "../common/ITranslationProvider";
-import SQLGlotPython from "./sqlglot_python";
+import SQLGlotPython, { fetchPythonDeclarations } from "./sqlglot_python";
 
 declare global {
     interface Window {
@@ -79,21 +79,21 @@ class PythonWASMProvider implements ITranslationProvider {
         dialect: string
     ): Promise<Record<string, any>> {
         if (!this.initialized) {
-        await this.Initialize();
+            await this.Initialize();
         }
 
         const content = await this.RunWithOutput<{ tables: string[], join_count: number }>(
-        SQLGlotPython.GetJoins,
-        {
-            source: code,
-            in_dialect: dialect,
-        }
+            SQLGlotPython.GetJoins,
+            {
+                source: code,
+                in_dialect: dialect,
+            }
         );
 
         if (!content) {
-        throw new Error(
-            "Could not extract joins: parsing or runtime error."
-        );
+            throw new Error(
+                "Could not extract joins: parsing or runtime error."
+            );
         }
 
         return content;
@@ -109,7 +109,8 @@ class PythonWASMProvider implements ITranslationProvider {
             await instance.loadPackage("micropip");
             const micropip = instance.pyimport("micropip");
             await micropip.install('sqlglot');
-            await instance.runPythonAsync(SQLGlotPython.PythonFunctionDeclarations);
+            const declarations = await fetchPythonDeclarations();
+            await instance.runPythonAsync(declarations);
             this.codeRunner = instance.runPythonAsync;
             this.createVariable = (key: string, value: any) => instance.globals.set(key, value);
         } catch (e) {
