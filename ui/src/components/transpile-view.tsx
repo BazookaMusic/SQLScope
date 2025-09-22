@@ -19,6 +19,7 @@ import {
 } from "./copy-to-clipboard";
 import { ITranslationProvider } from "../common/ITranslationProvider";
 import { QueryAnalysisSection } from "./queryanalysis-section";
+import { SchemaSection } from "./schema-section";
 import { Queries } from "../query-utils/queries";
 
 interface TranspileViewProps {
@@ -39,6 +40,17 @@ const TranspileView: React.FC<TranspileViewProps> = ({ translationProvider }) =>
     useState<string[] | undefined>(undefined);
   const [prettyPrint, setPrettyPrint] = useState<boolean>(false);
   const [errors, setErrors] = useState<string | undefined>();
+  const [schemaJson, setSchemaJson] = useState<string>(() => {
+    if (typeof window === "undefined") {
+      return "";
+    }
+    try {
+      return localStorage.getItem("sqlscope_schema") ?? "";
+    } catch {
+      return "";
+    }
+  });
+  const [schemaError, setSchemaError] = useState<string | null>(null);
 
   /* ----------------------------- Fetch Dialects ---------------------------- */
   useEffect(() => {
@@ -70,6 +82,45 @@ const TranspileView: React.FC<TranspileViewProps> = ({ translationProvider }) =>
     });
     window.history.replaceState(null, "", params);
   }, [inputSQL, inputDialect, outputDialect]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    try {
+      localStorage.setItem("sqlscope_schema", schemaJson);
+    } catch {
+      // Ignore storage errors (e.g. private mode).
+    }
+  }, [schemaJson]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    let cancelled = false;
+    const timeoutId = window.setTimeout(async () => {
+      try {
+        await translationProvider.SetSchema(schemaJson);
+        if (!cancelled) {
+          setSchemaError(null);
+        }
+      } catch (error: any) {
+        if (!cancelled) {
+          const message =
+            typeof error === "string"
+              ? error
+              : error?.message ?? "Failed to apply schema.";
+          setSchemaError(message);
+        }
+      }
+    }, 500);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+    };
+  }, [schemaJson, translationProvider]);
 
   /* -------------------------- Debounced Transpile -------------------------- */
   useEffect(() => {
@@ -173,8 +224,13 @@ const TranspileView: React.FC<TranspileViewProps> = ({ translationProvider }) =>
         CopyToClipboard={CopyToClipboard}
         CopyCurrentUrlToClipboard={CopyCurrentUrlToClipboard}
       />
+      <SchemaSection
+        schema={schemaJson}
+        onSchemaChange={setSchemaJson}
+        error={schemaError}
+      />
       <QueryAnalysisSection
-        query={outputSQL}
+        query={errors ? "" : outputSQL}
         translationProvider={translationProvider}
         dialect={outputDialect}
       />

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from typing import Iterable
 
 import pytest
 
@@ -10,8 +11,16 @@ from sqlglot_wasm import (
     get_available_dialects,
     get_columns,
     get_joins,
+    set_schema,
     transpile_query,
 )
+
+
+@pytest.fixture(autouse=True)
+def clear_schema() -> Iterable[None]:
+    set_schema("")
+    yield
+    set_schema("")
 
 
 @pytest.fixture(scope="module")
@@ -70,3 +79,32 @@ def test_get_joins_handles_invalid_dialect(sample_query: str) -> None:
     payload = json.loads(get_joins(sample_query, "unknown"))
 
     assert "errors" in payload
+
+
+def test_schema_enables_typechecking(sample_query: str) -> None:
+    schema_payload = {
+        "table_one": {"a": "int", "b": "int"},
+        "table_two": {"c": "int"},
+    }
+
+    status = json.loads(set_schema(json.dumps(schema_payload)))
+    assert "errors" not in status
+    assert status["status"] in {"ok", "cleared"}
+
+    payload = json.loads(transpile_query(sample_query, "duckdb", "duckdb"))
+    assert "errors" not in payload
+
+
+def test_schema_reports_unknown_columns() -> None:
+    schema_payload = {
+        "table_one": {"a": "int"},
+    }
+
+    status = json.loads(set_schema(json.dumps(schema_payload)))
+    assert "errors" not in status
+    assert status["status"] in {"ok", "cleared"}
+
+    payload = json.loads(transpile_query("SELECT b FROM table_one", "duckdb", "duckdb"))
+
+    assert "errors" in payload
+    assert "b" in payload["errors"].lower()

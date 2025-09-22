@@ -22,6 +22,17 @@ class PythonWASMProvider implements ITranslationProvider {
         return dialects?.dialects ?? [];
     }
 
+    public async SetSchema(schemaJson: string): Promise<void> {
+        if (!this.initialized) {
+            await this.Initialize();
+        }
+
+        await this.RunWithOutput<{ status: string }>(
+            SQLGlotPython.SetSchema,
+            { schema_json: schemaJson ?? "" }
+        );
+    }
+
     public async Transpile(
         code: string,
         dialect: string,
